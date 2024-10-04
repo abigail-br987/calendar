@@ -14,9 +14,9 @@ function App() {
     <GlobalStore.Provider value={globalStore}>
       <Router>
         <Routes>
-          <Route path="/" element={<MainPage />} />
+          <Route path="/calendar" element={<MainPage />} />
           <Route path="/calendar/:roomId" element={<Dashboard />} />
-          <Route path="/calendar" element={<LandingPage/>}/>
+          <Route path="/" element={<LandingPage/>}/>
         </Routes>
       </Router>
     </GlobalStore.Provider>
