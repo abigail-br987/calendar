@@ -1,43 +1,54 @@
 import { useState } from "react";
-import DetailsPanel from "./DetailsPanel";
-import TimePicker from "./TimePicker";
-import GlobalStore from "../lib/context/GlobalStore";
+import DetailsPanel from "./product/DetailsPanel";
+import TimePicker from "./product/TimePicker";
 import { useContext } from "react";
 import { useMemo } from "react";
 import io from "socket.io-client";
 import { useEffect } from "react";
-import CalendarView from "./CalendarView";
-import { getMonthData } from "./CalendarView";
+import CalendarView from "./product/CalendarView";
+import { getMonthData } from "./product/CalendarView";
+import { useParams } from "react-router-dom";
+import GlobalStore from "../lib/context/GlobalStore";
 
-function Dashboard() {
+const Dashboard = () => {
+  const { roomId } = useParams();
   const [hoveredDay, setHoveredDay] = useState(null);
-  const [{ selectedDay, notes, userName }, updateStore] = useContext(GlobalStore);
+  const [{ selectedDay, notes, userName, link }, updateStore] =
+    useContext(GlobalStore);
   const months = getMonthData(2024);
   const [notesTest, setNotesTest] = useState([]);
-  const socket = useMemo(() => io.connect("http://localhost:3006"), []);
-  useEffect(() => {
-    socket.on("receive_note", (data) => {
-      const { date, noteData } = data;
-      setNotesTest((prevNotes) => {
-        const updatedNotes = [...prevNotes, { date, noteData }];
-        return updatedNotes;
-      });
-    });
-    return () => {
-      socket.off("receive_note");
-    };
-  }, [socket]);
+
+  const socket = useMemo(
+    () => io("http://localhost:3006", { withCredentials: true }),
+    []
+  );
 
   useEffect(() => {
+    socket.emit("joinRoom", roomId);
+    console.log("Joining room:", roomId);
+    socket.on("receive_note", (data) => {
+      console.log("", data);
+      const { noteData } = data;
+      setNotesTest((prevNotes) => [...prevNotes, noteData]);
+    });
+
+    return () => {
+      socket.off("receive_note");
+      socket.emit("leaveRoom", roomId);
+    };
+  }, [roomId, socket]);
+
+  useEffect(() => {
+    console.log(notesTest, "notes");
     updateStore({ notes: notesTest });
   }, [notesTest]);
 
-  const handleSubmit = (selectedDay, noteData) => {
-    socket.emit("send_note", { date: selectedDay, noteData });
+  const handleSubmit = (noteData) => {
+    socket.emit("send_note", { roomId, noteData });
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen w-screen">
       {selectedDay && (
         <TimePicker
           selectedDay={selectedDay}
@@ -47,7 +58,13 @@ function Dashboard() {
         />
       )}
       <div className="bg-white space-y-5 flex-grow-0 h-full flex-shrink-0 w-1/5 p-6 flex flex-col">
-        <DetailsPanel months={months} hoveredDay={hoveredDay} notes={notes} />
+        <DetailsPanel
+          months={months}
+          hoveredDay={hoveredDay}
+          notes={notes}
+          userName={userName}
+          calendarLink={link}
+        />
       </div>
       <div className="basis-4/5 flex items-center justify-center">
         <CalendarView
@@ -59,6 +76,6 @@ function Dashboard() {
       </div>
     </div>
   );
-}
+};
 
 export default Dashboard;

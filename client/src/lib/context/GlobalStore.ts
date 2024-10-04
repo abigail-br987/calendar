@@ -9,6 +9,7 @@ export interface Store {
   selectedDay: string | null;
   notes: [];
   userName:string | null;
+  link:string | null
 }
 
 export const storeReducer: Reducer<Store, DeepPartial<Store>> = (
@@ -24,6 +25,7 @@ export const defaultStore = (): Store => ({
   selectedDay: null,
   notes: [],
   userName: null,
+  link:null,
 });
 
 const GlobalStore = createContext<[Store, Dispatch<DeepPartial<Store>>]>([

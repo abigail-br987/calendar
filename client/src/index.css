@@ -4,13 +4,22 @@
 
 @layer base {
     body {
-        @apply font-mono
+        @apply font-mono select-none
+    }
+    h1 {
+      @apply font-bold font-sans uppercase text-3xl;
     }
     h2 {
-      @apply font-bold text-lg;
+      @apply font-semibold text-lg font-sans;
     }
     h3 {
       @apply font-bold text-base;
+    }
+    input {
+      @apply p-3 border-2 border-black outline-none
+    }
+    button {
+      @apply py-2 px-3 bg-primary border-2 border-black
     }
   }
   

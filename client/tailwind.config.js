@@ -6,6 +6,10 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Hammersmith One'],
+        mono: ['DM Mono'],
+      },
       colors: {
         primary: {
           DEFAULT: '#ecffb2',

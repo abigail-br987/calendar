@@ -1,36 +1,24 @@
 import { useReducer } from "react";
-import MainPage from "./components/MainPage";
-import { useEffect } from "react";
-import { useState } from "react";
-import { useMemo } from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import MainPage from "./components/product/MainPage";
+import LandingPage from "./components/LandingPage";
+import Dashboard from "./components/Dashboard";
 import GlobalStore, {
   defaultStore,
   storeReducer,
 } from "./lib/context/GlobalStore";
-// import io from "socket.io-client";
-// import SocketExample from "./SocketExample";
-
 function App() {
   const globalStore = useReducer(storeReducer, defaultStore());
-  const [message, setMessage] = useState("");
-  const [messageReceived, setMessageReceived] = useState([]);
 
-  // const socket = useMemo(() => io.connect("http://localhost:3006"), []);
-  // const sendMessage = () => {
-  //  socket.emit("send_message", { message });
-  // };
-  // useEffect(() => {
-    
-    // const handleMessageReceive = (data) => {
-      // setMessageReceived((prevMessages) => [...prevMessages, data.message]);
-    //};
-    // socket.on("receive_message", handleMessageReceive);
-    // return () => {
-      // socket.off("receive_message", handleMessageReceive); };   }, [socket]);
   return (
     <GlobalStore.Provider value={globalStore}>
-      <MainPage />
-     {/*  <SocketExample/>*/} 
+      <Router>
+        <Routes>
+          <Route path="/" element={<MainPage />} />
+          <Route path="/calendar/:roomId" element={<Dashboard />} />
+          <Route path="/calendar" element={<LandingPage/>}/>
+        </Routes>
+      </Router>
     </GlobalStore.Provider>
   );
 }

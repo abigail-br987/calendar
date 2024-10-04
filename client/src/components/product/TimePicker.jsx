@@ -136,8 +136,9 @@ function TimePicker({ selectedDay, onClose, handleSubmit, userName }) {
       start: times[selectedRange.start],
       end: times[selectedRange.end],
       userName,
+      selectedDay,
     };
-    handleSubmit(selectedDay, noteData);
+    handleSubmit(noteData);
     setSelectedRange({ start: null, end: null });
     onClose();
   };
